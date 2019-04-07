@@ -303,7 +303,7 @@ def MainMenu():
         if tvhChannelsData:
 
             # Set metadata for each channel and add to the main menu
-            for tvhChannel in sorted(tvhChannelsData['entries'], key=lambda t: float(t['number']))[startCount:nextStartCount]:
+            for tvhChannel in sorted(tvhChannelsData['entries'], key=lambda t: t['name'].lower())[startCount:nextStartCount]:
 
                 # Set channel metadata using Tvheadend channel info
                 try:
@@ -323,7 +323,7 @@ def MainMenu():
                 streamAudio = None
                 streamType = None
                 streamResolution = None
-                thumb = None
+                thumb = R(THUMB)
                 fallbackThumb = None
                 epgThumb = None
                 art = R(ART)
@@ -525,6 +525,8 @@ def MainMenu():
 
                 if fallbackThumb is None and epgThumb:
                     fallbackThumb = epgThumb
+
+                thumb = tvhChannel['name'].lower().replace(' ','_')  + '.png'
 
                 # Use channel icons from Tvheadend if no other thumbnail is available
                 try:
@@ -1093,6 +1095,7 @@ def image(url=None, fallback=None):
         return Redirect(R(ART))
 
     else:
+        return Redirect(R(url))
         try:
             imageContent = HTTP.Request(url, timeout=httpTimeout, cacheTime=imageCacheTime, values=None).content
             return DataObject(imageContent, 'image/jpeg')
